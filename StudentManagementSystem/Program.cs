@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using StudentManagementSystem.Repository.Data;
 using StudentManagementSystem.Service.Mapper;
+using StudentManagementSystem.Service.Service;
+using StudentManagementSystem.Repository.Repository;
+using StudentManagementSystem.API.Middlewares;
 
 namespace StudentManagementSystem.API
 {
@@ -22,6 +25,9 @@ namespace StudentManagementSystem.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IStudentService, StudentService>();
+            builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
             var app = builder.Build();
 
@@ -40,6 +46,9 @@ namespace StudentManagementSystem.API
             app.MapControllers();
 
             CreateHostBuilder(args).Build();
+
+            app.UseRequestLoggingMiddleware();
+            app.UseErrorHandlingMiddleware();
 
             app.Run();
         }
@@ -68,7 +77,23 @@ namespace StudentManagementSystem.API
                 Dependency.RegisterServices(services);
 
                 services.AddControllers();
-            });
+            })
+
+            .Configure(app =>
+                                {
+
+                                    app.UseRouting();
+                                    app.UseAuthentication();
+                                    app.UseAuthorization();
+                                    app.UseCors();
+                                    app.UseResponseCaching();
+                                    app.UseEndpoints(endpoints =>
+                                    {
+                                        endpoints.MapControllers();
+                                    });
+                                });
         });
+
+
     }
 }
