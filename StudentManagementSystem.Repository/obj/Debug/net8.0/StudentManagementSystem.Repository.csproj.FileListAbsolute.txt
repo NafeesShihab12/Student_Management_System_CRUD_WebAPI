@@ -1,0 +1,15 @@
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\bin\Debug\net8.0\StudentManagementSystem.Repository.deps.json
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\bin\Debug\net8.0\StudentManagementSystem.Repository.runtimeconfig.json
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\bin\Debug\net8.0\StudentManagementSystem.Repository.dll
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\bin\Debug\net8.0\StudentManagementSystem.Repository.pdb
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.csproj.AssemblyReference.cache
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.AssemblyInfoInputs.cache
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.AssemblyInfo.cs
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.csproj.CoreCompileInputs.cache
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.sourcelink.json
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.dll
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\refint\StudentManagementSystem.Repository.dll
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.pdb
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\StudentManagementSystem.Repository.genruntimeconfig.cache
+C:\Users\USER\source\repos\StudentManagementSystem\StudentManagementSystem.Repository\obj\Debug\net8.0\ref\StudentManagementSystem.Repository.dll
