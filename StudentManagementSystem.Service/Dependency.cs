@@ -14,6 +14,7 @@ namespace StudentManagementSystem.Service
         public static void RegisterServices(IServiceCollection services)
         {
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
         }
     }
 }

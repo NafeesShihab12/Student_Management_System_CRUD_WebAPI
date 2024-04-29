@@ -1,3 +1,12 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using StudentManagementSystem.Service;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using System;
+using StudentManagementSystem.Repository.Data;
+using StudentManagementSystem.Service.Mapper;
 
 namespace StudentManagementSystem.API
 {
@@ -30,7 +39,36 @@ namespace StudentManagementSystem.API
 
             app.MapControllers();
 
+            CreateHostBuilder(args).Build();
+
             app.Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+    Host.CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webBuilder =>
+        {
+            webBuilder.ConfigureServices((context, services) =>
+            {
+                var configuration = context.Configuration;
+                var databaseProvider = configuration["DatabaseProvider"];
+
+                if (databaseProvider == "PostgreSQL")
+                {
+                    var connectionString = configuration.GetConnectionString("DefaultConnection");
+                    services.AddDbContext<StudentDbContext>(options =>
+                        options.UseNpgsql(connectionString));
+                }
+                else if (databaseProvider == "InMemory")
+                {
+                    services.AddDbContext<StudentDbContext>(options =>
+                        options.UseInMemoryDatabase("StudentDatabase"));
+                }
+
+                Dependency.RegisterServices(services);
+
+                services.AddControllers();
+            });
+        });
     }
 }
