@@ -5,11 +5,14 @@ using StudentManagementSystem.Service.Service;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using StudentManagementSystem.API.Filters;
 
 namespace StudentManagementSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(AuthorizationFilter))]
+    [ServiceFilter(typeof(GlobalExceptionFilter))]
     public class StudentController : ControllerBase
     {
         private readonly IStudentService _studentService;
@@ -72,8 +75,8 @@ namespace StudentManagementSystem.API.Controllers
                 if (id != studentDTO.Id)
                     return BadRequest("ID mismatch");
 
-                await _studentService.UpdateStudent(studentDTO);
-                return Ok(studentDTO);
+                var updatedStudent = await _studentService.UpdateStudent(studentDTO);
+                return Ok(updatedStudent);
             }
             catch (Exception ex)
             {

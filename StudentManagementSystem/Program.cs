@@ -45,7 +45,7 @@ namespace StudentManagementSystem.API
 
             app.MapControllers();
 
-            CreateHostBuilder(args).Build();
+            CreateHostBuilder(args).Build().Run();
 
             app.UseRequestLoggingMiddleware();
             app.UseErrorHandlingMiddleware();
@@ -64,12 +64,12 @@ namespace StudentManagementSystem.API
 
                 if (databaseProvider == "PostgreSQL")
                 {
-                    var connectionString = configuration.GetConnectionString("DefaultConnection");
+                    var connectionString = configuration.GetConnectionString("StudentManagementSystemPostgres");
                     services.AddDbContext<StudentDbContext>(options =>
                         options.UseNpgsql(connectionString));
                 }
                 else if (databaseProvider == "InMemory")
-                {
+                { 
                     services.AddDbContext<StudentDbContext>(options =>
                         options.UseInMemoryDatabase("StudentDatabase"));
                 }
@@ -88,8 +88,8 @@ namespace StudentManagementSystem.API
                                     app.UseCors();
                                     app.UseResponseCaching();
                                     app.UseEndpoints(endpoints =>
-                                    {
-                                        endpoints.MapControllers();
+                                   {
+                                       endpoints.MapControllers();
                                     });
                                 });
         });
