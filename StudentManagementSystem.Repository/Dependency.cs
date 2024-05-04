@@ -14,5 +14,6 @@ namespace StudentManagementSystem.Repository
         {
             services.AddScoped<IStudentRepository, StudentRepository>();
         }
+
     }
 }

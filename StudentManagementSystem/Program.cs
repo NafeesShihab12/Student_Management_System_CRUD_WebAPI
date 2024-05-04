@@ -9,11 +9,15 @@ using StudentManagementSystem.API.Middlewares;
 using StudentManagementSystem.API.Filters;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore.Storage;
+using StudentManagementSystem.Service;
 
 namespace StudentManagementSystem.API
 {
     public class Program
     {
+        public static object services;
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +26,8 @@ namespace StudentManagementSystem.API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            Dependency.RegisterServices(builder.Services);
 
             // Configuration
             var configuration = new ConfigurationBuilder()
@@ -35,7 +41,7 @@ namespace StudentManagementSystem.API
                 builder.Services.AddDbContext<StudentDbContext>(options =>
                     options.UseNpgsql(builder.Configuration.GetConnectionString("StudentManagementSystemPostgres")));
             }
-            else
+            else if (builder.Configuration["DatabaseProvider"] == "InMemory")
             {
                 builder.Services.AddDbContext<StudentDbContext>(options =>
                     options.UseInMemoryDatabase("Student"));
