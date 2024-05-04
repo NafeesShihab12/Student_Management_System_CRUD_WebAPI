@@ -1,15 +1,14 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using StudentManagementSystem.Service;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using System;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using StudentManagementSystem.Repository.Data;
 using StudentManagementSystem.Service.Mapper;
 using StudentManagementSystem.Service.Service;
 using StudentManagementSystem.Repository.Repository;
 using StudentManagementSystem.API.Middlewares;
+using StudentManagementSystem.API.Filters;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
 
 namespace StudentManagementSystem.API
 {
@@ -20,80 +19,94 @@ namespace StudentManagementSystem.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Configuration
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+            builder.Configuration.AddConfiguration(configuration);
+
+            // Configure database context based on environment
+            if (builder.Configuration["DatabaseProvider"] == "PostgreSQL")
+            {
+                builder.Services.AddDbContext<StudentDbContext>(options =>
+                    options.UseNpgsql(builder.Configuration.GetConnectionString("StudentManagementSystemPostgres")));
+            }
+            else
+            {
+                builder.Services.AddDbContext<StudentDbContext>(options =>
+                    options.UseInMemoryDatabase("Student"));
+            }
+
+            // Register services
             builder.Services.AddScoped<IStudentService, StudentService>();
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+            builder.Services.AddScoped<StudentMapper>();
+            builder.Services.AddScoped<AuthorizationFilter>();
+            builder.Services.AddScoped<GlobalExceptionFilter>();
+            builder.Services.AddScoped<JwtTokenValidator>();
+            builder.Services.AddResponseCaching();
+
+            // JWT authentication configuration
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"]);
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Student Management System API v1"));
+            }
+            else
+            {
+                app.UseHttpsRedirection();
             }
 
-            app.UseHttpsRedirection();
+            app.UseRouting();
 
+            // Enable CORS
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins("http://example.com") // Specify allowed origins
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<RequestLoggingMiddleware>();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseMiddleware<AuthenticationMiddleware>();
 
-            app.MapControllers();
+            app.UseResponseCaching();
 
-            CreateHostBuilder(args).Build().Run();
-
-            app.UseRequestLoggingMiddleware();
-            app.UseErrorHandlingMiddleware();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.Run();
         }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-    Host.CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(webBuilder =>
-        {
-            webBuilder.ConfigureServices((context, services) =>
-            {
-                var configuration = context.Configuration;
-                var databaseProvider = configuration["DatabaseProvider"];
-
-                if (databaseProvider == "PostgreSQL")
-                {
-                    var connectionString = configuration.GetConnectionString("StudentManagementSystemPostgres");
-                    services.AddDbContext<StudentDbContext>(options =>
-                        options.UseNpgsql(connectionString));
-                }
-                else if (databaseProvider == "InMemory")
-                { 
-                    services.AddDbContext<StudentDbContext>(options =>
-                        options.UseInMemoryDatabase("StudentDatabase"));
-                }
-
-                Dependency.RegisterServices(services);
-
-                services.AddControllers();
-            })
-
-            .Configure(app =>
-                                {
-
-                                    app.UseRouting();
-                                    app.UseAuthentication();
-                                    app.UseAuthorization();
-                                    app.UseCors();
-                                    app.UseResponseCaching();
-                                    app.UseEndpoints(endpoints =>
-                                   {
-                                       endpoints.MapControllers();
-                                    });
-                                });
-        });
-
-
     }
 }

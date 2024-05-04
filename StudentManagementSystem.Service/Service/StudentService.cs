@@ -24,7 +24,7 @@ namespace StudentManagementSystem.Service.Service
         public async Task<IEnumerable<StudentDTO>> GetAllStudents()
         {
             var students = await _studentRepository.GetAllStudents();
-            return (IEnumerable<StudentDTO>)StudentMapper.MapToDTO((Student)students);
+            return StudentMapper.MapToDTO(students); ;
         }
 
         public async Task<StudentDTO> GetStudentById(int id)

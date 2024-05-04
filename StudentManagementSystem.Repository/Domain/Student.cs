@@ -1,5 +1,8 @@
-﻿namespace StudentManagementSystem.Repository.Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace StudentManagementSystem.Repository.Domain
 {
+    //[Table("")]
     public class Student
     {
         public int Id { get; set; }
@@ -10,6 +13,5 @@
         public double CGPA { get; set; }
         public string? Address { get; set; }
         public string? Email { get; set; }
-
     }
 }

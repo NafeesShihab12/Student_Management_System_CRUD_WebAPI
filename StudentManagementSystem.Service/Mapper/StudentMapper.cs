@@ -10,9 +10,9 @@ using System.Net;
 
 namespace StudentManagementSystem.Service.Mapper
 {
-    public static class StudentMapper
+    public class StudentMapper
     {
-        public static StudentDTO MapToDTO(Student student)
+        public static StudentDTO? MapToDTO(Student student)
         {
             if (student == null)
                 return null;
@@ -30,7 +30,7 @@ namespace StudentManagementSystem.Service.Mapper
             };
         }
 
-        public static Student MapToEntity(StudentDTO studentDTO)
+        public static Student? MapToEntity(StudentDTO studentDTO)
         {
             if (studentDTO == null)
                 return null;
@@ -46,6 +46,14 @@ namespace StudentManagementSystem.Service.Mapper
                 Address = studentDTO.Address,
                 Email = studentDTO.Email
             };
+        }
+
+        public static IEnumerable<StudentDTO> MapToDTO(IEnumerable<Student> students)
+        {
+            if (students == null)
+                return Enumerable.Empty<StudentDTO>();
+
+            return students.Select(student => MapToDTO(student)).ToList();
         }
     }
 }

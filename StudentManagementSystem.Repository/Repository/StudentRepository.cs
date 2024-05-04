@@ -25,7 +25,8 @@ namespace StudentManagementSystem.Repository.Repository
 
         public async Task<Student> GetStudentById(int id)
         {
-            return await _context.Student.FindAsync(id);
+            var student =  await _context.Student.FindAsync(id)!;
+            return student!;
         }
 
         public async Task<Student> AddStudent(Student student)

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace StudentManagementSystem.API.Middlewares
 {
-
-
         public class RequestLoggingMiddleware
         {
             private readonly RequestDelegate _next;

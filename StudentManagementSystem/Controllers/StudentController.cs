@@ -23,6 +23,7 @@ namespace StudentManagementSystem.API.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 60)] // Cache the response for 60 seconds
         public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents()
         {
             try
